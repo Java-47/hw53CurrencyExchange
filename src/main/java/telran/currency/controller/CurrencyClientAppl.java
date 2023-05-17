@@ -55,17 +55,9 @@ public class CurrencyClientAppl {
 
 	private static void allCurrenciesPrint(HashMap<String, Double> rates) {
 
-		System.out.println("Currencies available - ");
-		System.out.println();
-		String[] keysArray = rates.keySet().toArray(new String[0]);
-
-		Arrays.stream(keysArray).forEachOrdered(key -> {
-			System.out.print(key + " ");
-			if ((Arrays.asList(keysArray).indexOf(key) + 1) % 25 == 0) {
-				System.out.println();
-			}
-		});
-		System.out.println();
-		System.out.println();
+			System.out.println("Currencies available -\n");
+			String keysString = String.join(" ", rates.keySet());
+			System.out.println(keysString.replaceAll("(.{120})", "$1\n"));
+			System.out.println();
 	}
 }
