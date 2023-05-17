@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
 import java.util.HashMap;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
@@ -14,17 +13,13 @@ import org.springframework.web.client.RestTemplate;
 import telran.currency.dto.CurrencyDto;
 
 public class CurrencyClientAppl {
-
+	
+	private static final String URL_REQUEST = "http://data.fixer.io/api/latest?access_key=";
 	private static final String API_KEY = "4bbbee24c73504eeab5096340d25443b";
 
 	public static void main(String[] args) throws URISyntaxException, IOException {
 
-		RestTemplate restTemplate = new RestTemplate();
-		RequestEntity<String> requestEntity = new RequestEntity<String>(HttpMethod.GET,
-				new URI("http://data.fixer.io/api/latest?access_key=" + API_KEY));
-		ResponseEntity<CurrencyDto> responseEntity = restTemplate.exchange(requestEntity, CurrencyDto.class);
-		HashMap<String, Double> rates = responseEntity.getBody().getRates();
-
+		HashMap<String, Double> rates = requestHttp(URL_REQUEST, API_KEY);
 		allCurrenciesPrint(rates);
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
@@ -55,9 +50,17 @@ public class CurrencyClientAppl {
 
 	private static void allCurrenciesPrint(HashMap<String, Double> rates) {
 
-			System.out.println("Currencies available -\n");
-			String keysString = String.join(" ", rates.keySet());
-			System.out.println(keysString.replaceAll("(.{120})", "$1\n"));
-			System.out.println();
+		System.out.println("Currencies available -");
+		String keysString = String.join(" ", rates.keySet());
+		System.out.println(keysString.replaceAll("(.{120})", "$1\n"));
+		System.out.println();
+	}
+
+	private static HashMap<String, Double> requestHttp(String URL, String API_KEY) throws URISyntaxException {
+
+		RestTemplate restTemplate = new RestTemplate();
+		RequestEntity<String> requestEntity = new RequestEntity<String>(HttpMethod.GET, new URI(URL + API_KEY));
+		ResponseEntity<CurrencyDto> responseEntity = restTemplate.exchange(requestEntity, CurrencyDto.class);
+		return responseEntity.getBody().getRates();
 	}
 }
